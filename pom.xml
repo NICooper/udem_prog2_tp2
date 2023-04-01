@@ -4,15 +4,39 @@
   <groupId>ca.umontreal.ncooper</groupId>
   <artifactId>TP2</artifactId>
   <version>1</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>19</maven.compiler.release>
+        <maven.compiler.source>19</maven.compiler.source>
+        <maven.compiler.target>19</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>20</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>20</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>20</version>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <profile>
             <id>client-fx-profile</id>
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-                <maven.compiler.release>11</maven.compiler.release>
-                <maven.compiler.source>11</maven.compiler.source>
-                <maven.compiler.target>11</maven.compiler.target>
+                <maven.compiler.release>19</maven.compiler.release>
+                <maven.compiler.source>19</maven.compiler.source>
+                <maven.compiler.target>19</maven.compiler.target>
                 <javafx.version>20</javafx.version>
                 <javafx.plugin.version>0.0.8</javafx.plugin.version>
                 <main.class>client.client_fx.Main</main.class>
@@ -109,9 +133,9 @@
             <id>client-simple-profile</id>
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-                <maven.compiler.release>11</maven.compiler.release>
-                <maven.compiler.source>11</maven.compiler.source>
-                <maven.compiler.target>11</maven.compiler.target>
+                <maven.compiler.release>19</maven.compiler.release>
+                <maven.compiler.source>19</maven.compiler.source>
+                <maven.compiler.target>19</maven.compiler.target>
                 <javafx.version>20</javafx.version>
                 <javafx.plugin.version>0.0.8</javafx.plugin.version>
                 <main.class>client.client_simple.Client</main.class>
@@ -155,9 +179,9 @@
             <id>server-profile</id>
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-                <maven.compiler.release>11</maven.compiler.release>
-                <maven.compiler.source>11</maven.compiler.source>
-                <maven.compiler.target>11</maven.compiler.target>
+                <maven.compiler.release>19</maven.compiler.release>
+                <maven.compiler.source>19</maven.compiler.source>
+                <maven.compiler.target>19</maven.compiler.target>
                 <javafx.version>20</javafx.version>
                 <javafx.plugin.version>0.0.8</javafx.plugin.version>
                 <main.class>server.ServerLauncher</main.class>

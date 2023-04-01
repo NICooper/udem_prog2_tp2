@@ -101,12 +101,7 @@ public class Server {
      La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
     public void handleRegistration() {
-        try {
-            RegistrationForm form = objectInputStream.readObject();
-        }
-        catch (Exception e) {
-
-        }
+        // TODO: implémenter cette méthode
     }
 }
 
