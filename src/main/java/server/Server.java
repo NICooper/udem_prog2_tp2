@@ -1,14 +1,16 @@
 package server;
 
 import javafx.util.Pair;
+import models.Course;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import java.util.List;
+import java.util.Scanner;
 
 public class Server {
 
@@ -91,7 +93,25 @@ public class Server {
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
     public void handleLoadCourses(String arg) {
-        // TODO: implémenter cette méthode
+        try (FileReader fr = new FileReader("cours.txt")) {
+            BufferedReader reader = new BufferedReader(fr);
+
+            List<Course> courses = new ArrayList<>();
+
+            String line;
+            while((line = reader.readLine()) != null) {
+                String[] courseInfo = line.split("\t");
+                courses.add(new Course(courseInfo[1], courseInfo[0], courseInfo[2]));
+            }
+            this.objectOutputStream.writeObject(courses);
+
+        }
+        catch (FileNotFoundException fe) {
+            System.out.println("Erreur à l'ouverture du fichier.");
+        }
+        catch (IOException ex) {
+            System.out.println("Erreur");
+        }
     }
 
     /**
