@@ -1,7 +1,6 @@
 package server;
 
 import javafx.util.Pair;
-import server.models.RegistrationForm;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
