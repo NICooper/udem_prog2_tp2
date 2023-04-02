@@ -2,6 +2,7 @@ package server;
 
 import javafx.util.Pair;
 import models.Course;
+import models.RegistrationForm;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -100,31 +101,67 @@ public class Server {
 
             String line;
             while((line = reader.readLine()) != null) {
-
-                String[] courseInfo = Arrays.stream(line.split("\t"))
-                        .filter(s -> s.contains(session))
-                        .toArray(String[]::new);
-
-                courses.add(new Course(courseInfo[1], courseInfo[0], courseInfo[2]));
+                String[] courseInfo = line.split("\t");
+                if (courseInfo[2].equals(session)) {
+                    courses.add(new Course(courseInfo[1], courseInfo[0], courseInfo[2]));
+                }
             }
             this.objectOutputStream.writeObject(courses);
 
         }
         catch (FileNotFoundException fe) {
-            System.out.println("Erreur à l'ouverture du fichier.");
+            System.out.println("Fichier pas trouvé.");
         }
         catch (IOException ex) {
-            System.out.println("Erreur");
+            System.out.println("Erreur à l'ouverture du fichier.");
         }
     }
 
     /**
-     Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
+     Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream',
+     l'enregistrer dans un fichier texte
      et renvoyer un message de confirmation au client.
-     La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
+     La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet,
+     l'écriture dans un fichier ou dans le flux de sortie.
      */
     public void handleRegistration() {
-        // TODO: implémenter cette méthode
+
+        List<Course> courses = new ArrayList<>();
+
+        try (FileReader fr = new FileReader("cours.txt")){
+            BufferedReader reader = new BufferedReader(fr);
+
+            String line;
+            while((line = reader.readLine()) != null) {
+                String[] courseInfo = line.split("\t");
+                courses.add(new Course(courseInfo[1], courseInfo[0], courseInfo[2]));
+            }
+        }
+        catch (FileNotFoundException fe) {
+            System.out.println("Fichier pas trouvé.");
+        }
+        catch (IOException ex) {
+            System.out.println("Erreur à l'ouverture du fichier.");
+        }
+
+        try  {
+            RegistrationForm inscriptionInfo = (RegistrationForm) objectInputStream.readObject();
+
+            for (Course cours : courses) {
+                String course = String.valueOf(cours);
+
+            }
+            inscriptionInfo.getCourse();
+
+
+
+
+        } catch (ClassNotFoundException ex) {
+            System.out.println("La class lue n'existe pas dans le programme");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.out.println("Erreur à la lecture du fichier");
+        }
     }
 }
 

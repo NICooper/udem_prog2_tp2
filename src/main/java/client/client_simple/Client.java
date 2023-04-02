@@ -27,10 +27,7 @@ public class Client {
                     clientSocket.getInputStream()
             );
 
-            Object response;
-            while ((response = is.readObject()) == null) {
-
-            }
+            Object response = is.readObject();
 
             System.out.println(response.toString());
             is.close();
