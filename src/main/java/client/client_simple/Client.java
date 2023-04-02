@@ -9,7 +9,7 @@ public class Client {
         try {
             Socket clientSocket = new Socket("127.0.0.1", 1337);
 
-             ObjectOutputStream os = new ObjectOutputStream(
+            ObjectOutputStream os = new ObjectOutputStream(
                 clientSocket.getOutputStream()
             );
             Scanner scanner = new Scanner(System.in);
@@ -31,7 +31,7 @@ public class Client {
             while ((response = is.readObject()) == null) {
 
             }
-            
+
             System.out.println(response.toString());
             is.close();
         } catch (IOException ex) {

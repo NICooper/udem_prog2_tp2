@@ -92,7 +92,7 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) {
+    public void handleLoadCourses(String session) {
         try (FileReader fr = new FileReader("cours.txt")) {
             BufferedReader reader = new BufferedReader(fr);
 
@@ -100,7 +100,11 @@ public class Server {
 
             String line;
             while((line = reader.readLine()) != null) {
-                String[] courseInfo = line.split("\t");
+
+                String[] courseInfo = Arrays.stream(line.split("\t"))
+                        .filter(s -> s.contains(session))
+                        .toArray(String[]::new);
+
                 courses.add(new Course(courseInfo[1], courseInfo[0], courseInfo[2]));
             }
             this.objectOutputStream.writeObject(courses);
