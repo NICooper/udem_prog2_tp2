@@ -30,7 +30,7 @@ public class Course implements Serializable {
         this.code = code;
     }
 
-    public String getSession() {
+    public static String getSession() {
         return session;
     }
 
