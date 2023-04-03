@@ -1,5 +1,8 @@
 package client.client_simple;
 
+import models.Course;
+import models.RegistrationForm;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
@@ -19,8 +22,10 @@ public class Client {
 //
 //                writer.flush();
 //            }
-            os.writeObject("CHARGER Hiver");
-            os.close();
+            os.writeObject("INSCRIRE");
+            os.writeObject(new RegistrationForm("a", "b", "ab@gmail.com", "123", new Course("Prog 2", "IFT2255", "Automne")));
+//            os.writeObject("CHARGER Hiver");
+
 
             System.out.println(clientSocket.isConnected());
             ObjectInputStream is = new ObjectInputStream(
@@ -31,6 +36,7 @@ public class Client {
 
             System.out.println(response.toString());
             is.close();
+            os.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException e) {
