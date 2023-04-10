@@ -34,6 +34,12 @@ public class ClientFx extends Application implements ClientView {
                 (node) -> coursePane.getChildren().add(node)
         );
 
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                controller.setCourse(newVal, (course, validation) -> {});
+            }
+        });
+
         coursePane.getChildren().add(new Separator());
 
         var courseFilterPane = createHBox(Pos.CENTER, 50, (node) -> coursePane.getChildren().add(node));
@@ -88,30 +94,30 @@ public class ClientFx extends Application implements ClientView {
         var sendPane = createHBox(Pos.CENTER, 0, (node) -> grid.add(node, 1, 8, 1, 1));
 
         var sendButton = createButton("Envoyer", 80, (node) -> sendPane.getChildren().add(node));
-        var sendValidation = createValidationText(gridCol2Width, (node) -> grid.add(node, 1, 9, 1, 1));
-        sendValidation.setTextAlignment(TextAlignment.CENTER);
         sendButton.setDisable(true);
+
+        Alert alert = new Alert(Alert.AlertType.NONE, "");
 
         controller.registerFormStatusCallback((valid) -> sendButton.setDisable(!valid));
 
         sendButton.setOnAction((event) ->
             controller.registerToCourse(
                 (result) -> {
-                    sendValidation.setText(result.message);
                     if (result.success) {
                         table.getSelectionModel().clearSelection();
                         sendButton.setDisable(true);
+                        alert.setAlertType(Alert.AlertType.CONFIRMATION);
+                        alert.setContentText(result.message);
+                        alert.show();
+                    }
+                    else {
+                        alert.setAlertType(Alert.AlertType.ERROR);
+                        alert.setContentText(result.message);
+                        alert.show();
                     }
                 }
             )
         );
-
-        table.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                controller.setCourse(newVal, (course, validation) -> {});
-                sendValidation.setText("\n");
-            }
-        });
 
         var scene = new Scene(root, 600, 400);
 
@@ -120,11 +126,6 @@ public class ClientFx extends Application implements ClientView {
         stage.show();
 
         formatTable(table, 70);
-
-//        sendButton.setDisable(true);
-
-//        courses.setAll(new Course("Programmation 2", "IFT1025", "Hiver"), new Course("Genie Logiciel", "IFT2255", "Automne"));
-
     }
 
     public static void main(ClientController clientController) {

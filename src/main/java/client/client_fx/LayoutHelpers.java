@@ -120,9 +120,11 @@ public class LayoutHelpers {
                     if (validation.isValid) {
                         validationText.setText("\n");
                         field.setText(name);
+                        field.setStyle("");
                     }
                     else {
                         validationText.setText(validation.validationMessage);
+                        field.setStyle("-fx-border-color: red;");
                     }
                 });
             }

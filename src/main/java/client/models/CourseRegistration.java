@@ -79,13 +79,13 @@ public abstract class CourseRegistration {
 
     public DataValidation setMatricule(String matricule) {
         matricule = matricule.strip();
-        if (Pattern.compile("\\d{6,}").matcher(matricule).matches()) {
+        if (Pattern.compile("\\d{8}").matcher(matricule).matches()) {
             this.form.setMatricule(matricule);
             validationTracker[3] = true;
             return new DataValidation(true);
         } else {
             validationTracker[3] = false;
-            return new DataValidation(false, "Un matricule valide doit contenir 6 ou plus chiffres seulement.");
+            return new DataValidation(false, "Un matricule valide ne contient que 8 chiffres.");
         }
     }
 
