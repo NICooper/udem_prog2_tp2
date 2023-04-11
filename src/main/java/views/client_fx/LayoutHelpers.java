@@ -1,6 +1,6 @@
-package client.client_fx;
+package views.client_fx;
 
-import client.models.DataValidation;
+import shared.models.DataValidation;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

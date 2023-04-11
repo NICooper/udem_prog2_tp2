@@ -1,6 +1,8 @@
-package client.models;
+package shared.models;
 
-public class ModelResult<T> {
+import java.io.Serializable;
+
+public class ModelResult<T> implements Serializable {
     public T data;
     public boolean success;
     public String message;

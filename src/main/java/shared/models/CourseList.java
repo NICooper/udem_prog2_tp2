@@ -1,19 +1,13 @@
-package client.models;
-
-import models.Course;
+package shared.models;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
 public abstract class CourseList {
-    private List<Course> courses;
+    protected List<Course> courses;
     private String session;
 
     public abstract ModelResult<List<Course>> loadFilteredCourseList();
-
-    public CourseList() {
-
-    }
 
     public DataValidation setSessionFilter(String session) {
         if (Pattern.compile(Sessions.getRegexString()).matcher(session).matches()) {
@@ -27,5 +21,14 @@ public abstract class CourseList {
 
     public String getSessionFilter() {
         return session;
+    }
+
+    public Course getCourseByCode(String code) {
+        for (Course course : courses) {
+            if (course.getCode().equals(code)) {
+                return course;
+            }
+        }
+        return null;
     }
 }

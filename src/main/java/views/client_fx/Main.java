@@ -1,8 +1,8 @@
-package client.client_fx;
+package views.client_fx;
 
-import client.controllers.ClientController;
-import client.models.RemoteCourseList;
-import client.models.RemoteCourseRegistration;
+import controllers.ClientController;
+import shared.models.RemoteCourseList;
+import shared.models.RemoteCourseRegistration;
 
 public class Main {
     public static void main(String[] args) {

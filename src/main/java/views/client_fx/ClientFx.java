@@ -1,23 +1,21 @@
-package client.client_fx;
+package views.client_fx;
 
-import client.controllers.ClientController;
-import client.models.Sessions;
-import client.views.ClientView;
+import controllers.ClientController;
+import shared.models.Sessions;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import models.Course;
+import shared.models.Course;
 
 import java.util.List;
 
-import static client.client_fx.LayoutHelpers.*;
+import static views.client_fx.LayoutHelpers.*;
 
-public class ClientFx extends Application implements ClientView {
+public class ClientFx extends Application {
     static ClientController controller;
 
     @Override
@@ -36,7 +34,7 @@ public class ClientFx extends Application implements ClientView {
 
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
-                controller.setCourse(newVal, (course, validation) -> {});
+                controller.setCourseByCode(newVal.getCode(), (course, validation) -> {});
             }
         });
 

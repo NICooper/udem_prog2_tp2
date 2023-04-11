@@ -1,11 +1,11 @@
-package client.controllers;
+package controllers;
 
-import client.models.CourseList;
-import client.models.CourseRegistration;
-import client.models.DataValidation;
-import client.models.ModelResult;
-import models.Course;
-import models.RegistrationForm;
+import shared.models.CourseList;
+import shared.models.CourseRegistration;
+import shared.models.DataValidation;
+import shared.models.ModelResult;
+import shared.models.Course;
+import shared.models.RegistrationForm;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -52,6 +52,18 @@ public class ClientController {
         DataValidation validation = this.courseReg.setMatricule(matricule);
         updateFormStatus();
         callback.accept(this.courseReg.getMatricule(), validation);
+    }
+
+    public void setCourseByCode(String code, BiConsumer<Course, DataValidation> callback) {
+        Course course = courseList.getCourseByCode(code);
+        if (course != null) {
+            DataValidation validation = this.courseReg.setCourse(course);
+            updateFormStatus();
+            callback.accept(this.courseReg.getCourse(), validation);
+        }
+        else {
+            callback.accept(null, new DataValidation(false, ""));
+        }
     }
 
     public void setCourse(Course course, BiConsumer<Course, DataValidation> callback) {

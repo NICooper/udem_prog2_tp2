@@ -1,7 +1,4 @@
-package client.models;
-
-import models.Course;
-import models.RegistrationForm;
+package shared.models;
 
 import java.util.regex.Pattern;
 

@@ -1,4 +1,4 @@
-package client.models;
+package shared.models;
 
 import java.util.Arrays;
 

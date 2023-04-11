@@ -1,4 +1,4 @@
-package client.models;
+package shared.models;
 
 public class DataValidation {
     public boolean isValid;

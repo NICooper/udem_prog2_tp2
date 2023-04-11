@@ -39,7 +39,7 @@
                 <maven.compiler.target>19</maven.compiler.target>
                 <javafx.version>20</javafx.version>
                 <javafx.plugin.version>0.0.8</javafx.plugin.version>
-                <main.class>client.client_fx.Main</main.class>
+                <main.class>views.client_fx.Main</main.class>
             </properties>
 
             <dependencies>
@@ -99,7 +99,7 @@
                                 <!-- Default configuration for running -->
                                 <!-- Usage: mvn clean javafx:run -->
                                 <configuration>
-                                    <mainClass>client.client_fx.Main</mainClass>
+                                    <mainClass>views.client_fx.Main</mainClass>
                                 </configuration>
                             </execution>
                         </executions>
@@ -138,7 +138,7 @@
                 <maven.compiler.target>19</maven.compiler.target>
                 <javafx.version>20</javafx.version>
                 <javafx.plugin.version>0.0.8</javafx.plugin.version>
-                <main.class>client.client_simple.Client</main.class>
+                <main.class>views.client_simple.Client</main.class>
             </properties>
 
             <build>
@@ -166,7 +166,7 @@
                             <archive>
                                 <manifest>
                                     <addClasspath>true</addClasspath>
-                                    <mainClass>client.client_simple.Client</mainClass>
+                                    <mainClass>views.client_simple.Client</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
