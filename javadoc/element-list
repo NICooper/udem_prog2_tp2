@@ -1,0 +1,5 @@
+controllers
+server
+shared.models
+views.client_fx
+views.client_simple
