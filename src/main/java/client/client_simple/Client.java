@@ -33,9 +33,6 @@ public class Client {
      * pour une session donnée, après affiche la liste des cours sous le format donné.
      *
      * courses est la liste des cours retournée par le Server.
-     * @throws IOException erreur d'entrée/sortie
-     * @throws ClassNotFoundException erreur quand aucune définition de la classe Course
-     * n'a pu être trouvé
      */
     public static void getAvailableCourses() {
         System.out.println("Veuillez choisir la session pour laquelle vous voulez consulter la liste des cours:");
@@ -77,8 +74,7 @@ public class Client {
             inscriptionToCourse();
 
         } catch (IOException ex) {
-            ex.printStackTrace();
-            System.out.println("Erreur à l'ouverture/écriture du fichier");
+            System.out.println("Erreur de connexion avec le serveur");
         } catch (ClassNotFoundException ce) {
             System.out.println("La class lue n'existe pas dans le programme");
         }
@@ -90,9 +86,6 @@ public class Client {
      * choisit de s'inscrire au cours, il doit donner les informations requises, y compris le code du cours.
      * Le code du cours doit être présent dans la liste des cours disponibles dans la session en question.
      * Après le client va envoyer toutes les informations sous la forme d'un Objet RegistrationForm.
-     * @throws IOException erreur d'entrée/sortie
-     * @throws ClassNotFoundException erreur quand aucune définition de la classe RegistrationForm
-     * n'a pu être trouvé
      */
     public static void inscriptionToCourse() {
         System.out.println("Choix:");
@@ -159,8 +152,7 @@ public class Client {
             os.close();
 
         } catch (IOException ex) {
-            ex.printStackTrace();
-            System.out.println("Erreur à l'ouverture/écriture du fichier");
+            System.out.println("Erreur de connexion avec le serveur");
         } catch (ClassNotFoundException ce) {
             System.out.println("La class lue n'existe pas dans le programme");
         }

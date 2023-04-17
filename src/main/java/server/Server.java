@@ -61,7 +61,6 @@ public class Server {
     /**
      *  Attend la connexion d'un client, écoute et exécute les requêtes envoyées par le client,
      *  et déconnecte une fois la requête est traitée.
-     *  @throws Exception apparition d'une situation anormale qui conduirait à l'échec du programme
      */
     public void run() {
         while (true) {
@@ -134,15 +133,13 @@ public class Server {
     }
 
     /**
-     * Charge la liste des cours filtré par la session demandée par le client.
+     * Charge la liste des cours filtrée par la session demandée par le client.
      *
-     * Le fichier cours.txt contient tous les cours disponible que le serveur doit lire.
+     * Le fichier cours.txt contient tous les cours disponibles que le serveur doit lire.
      * La liste courses contient les cours sous le format de Class Course, filtré par la session
      * avec le code, le nom et la session du cours.
      *
-     * @param arg la session pour laquelle on veut récupérer la liste des cours
-     * @throws FileNotFoundException échec de la tentative d'ouverture du fichier "cours.txt"
-     * @throws IOException erreur d'entrée de FileReader et de sortie du stream.
+     * @param session la session pour laquelle on veut récupérer la liste des cours
      */
     public void handleLoadCourses(String session) {
         try (FileReader fr = new FileReader("cours.txt")) {
@@ -176,10 +173,6 @@ public class Server {
      * La liste courses contient tous les cours disponibles sous le format Object Course.
      * L'objet InscriptionInfo contient les informations d'inscription au cours.
      * Le String clientInscription est la ligne d'inscription correspondante au fichier inscription.txt.
-     * @throws FileNotFoundException échec de la tentative d'ouverture du fichier "cours.txt"
-     * @throws IOException erreur d'entrée/sortie
-     * @throws ClassNotFoundException  erreur quand aucune définition de la classe Course ou RegistrationForm
-     * n'ont pu être trouvé
      */
     public void handleRegistration() {
 
@@ -232,8 +225,7 @@ public class Server {
         } catch (ClassNotFoundException ex) {
             System.out.println("La class lue n'existe pas dans le programme");
         } catch (IOException ex) {
-            ex.printStackTrace();
-            System.out.println("Erreur à l'ouverture du fichier");
+            System.out.println("Erreur de lecture de la classe RegistrationForm");
         }
     }
 }
