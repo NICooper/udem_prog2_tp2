@@ -6,9 +6,9 @@
   <version>1</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>19</maven.compiler.release>
-        <maven.compiler.source>19</maven.compiler.source>
-        <maven.compiler.target>19</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -34,9 +34,9 @@
             <id>client-fx-profile</id>
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-                <maven.compiler.release>19</maven.compiler.release>
-                <maven.compiler.source>19</maven.compiler.source>
-                <maven.compiler.target>19</maven.compiler.target>
+                <maven.compiler.release>17</maven.compiler.release>
+                <maven.compiler.source>17</maven.compiler.source>
+                <maven.compiler.target>17</maven.compiler.target>
                 <javafx.version>20</javafx.version>
                 <javafx.plugin.version>0.0.8</javafx.plugin.version>
                 <main.class>views.client_fx.Main</main.class>
@@ -83,11 +83,11 @@
                         <configuration>
                             <excludes>
                                 <exclude>**/server/**</exclude>
-                                <exclude>**/client_simple/**</exclude>
+                                <exclude>**/views/client_simple/**</exclude>
                             </excludes>
-                            <release>19</release>
-                            <source>19</source>
-                            <target>19</target>
+                            <release>17</release>
+                            <source>17</source>
+                            <target>17</target>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -133,9 +133,9 @@
             <id>client-simple-profile</id>
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-                <maven.compiler.release>19</maven.compiler.release>
-                <maven.compiler.source>19</maven.compiler.source>
-                <maven.compiler.target>19</maven.compiler.target>
+                <maven.compiler.release>17</maven.compiler.release>
+                <maven.compiler.source>17</maven.compiler.source>
+                <maven.compiler.target>17</maven.compiler.target>
                 <javafx.version>20</javafx.version>
                 <javafx.plugin.version>0.0.8</javafx.plugin.version>
                 <main.class>views.client_simple.Client</main.class>
@@ -152,11 +152,11 @@
                         <configuration>
                             <excludes>
                                 <exclude>**/server/**</exclude>
-                                <exclude>**/client_fx/**</exclude>
+                                <exclude>**/views/client_fx/**</exclude>
                             </excludes>
-                            <release>19</release>
-                            <source>19</source>
-                            <target>19</target>
+                            <release>17</release>
+                            <source>17</source>
+                            <target>17</target>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -179,9 +179,9 @@
             <id>server-profile</id>
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-                <maven.compiler.release>19</maven.compiler.release>
-                <maven.compiler.source>19</maven.compiler.source>
-                <maven.compiler.target>19</maven.compiler.target>
+                <maven.compiler.release>17</maven.compiler.release>
+                <maven.compiler.source>17</maven.compiler.source>
+                <maven.compiler.target>17</maven.compiler.target>
                 <javafx.version>20</javafx.version>
                 <javafx.plugin.version>0.0.8</javafx.plugin.version>
                 <main.class>server.ServerLauncher</main.class>
@@ -204,11 +204,12 @@
                         <version>3.8.0</version>
                         <configuration>
                             <excludes>
-                                <exclude>**/client/**</exclude>
+                                <exclude>**/views/**</exclude>
+                                <exclude>**/controllers/**</exclude>
                             </excludes>
-                            <release>19</release>
-                            <source>19</source>
-                            <target>19</target>
+                            <release>17</release>
+                            <source>17</source>
+                            <target>17</target>
                         </configuration>
                     </plugin>
                     <plugin>

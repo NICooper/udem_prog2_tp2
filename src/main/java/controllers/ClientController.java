@@ -31,35 +31,35 @@ public class ClientController {
     }
 
     public void setFirstName(String firstName, BiConsumer<String, DataValidation> callback) {
-        DataValidation validation = this.courseReg.setFirstName(firstName);
+        DataValidation validation = this.courseReg.getValidatedForm().setFirstName(firstName);
         updateFormStatus();
-        callback.accept(this.courseReg.getFirstName(), validation);
+        callback.accept(this.courseReg.getValidatedForm().getFirstName(), validation);
     }
 
     public void setLastName(String lastName, BiConsumer<String, DataValidation> callback) {
-        DataValidation validation = this.courseReg.setLastName(lastName);
+        DataValidation validation = this.courseReg.getValidatedForm().setLastName(lastName);
         updateFormStatus();
-        callback.accept(this.courseReg.getLastName(), validation);
+        callback.accept(this.courseReg.getValidatedForm().getLastName(), validation);
     }
 
     public void setEmail(String email, BiConsumer<String, DataValidation> callback) {
-        DataValidation validation = this.courseReg.setEmail(email);
+        DataValidation validation = this.courseReg.getValidatedForm().setEmail(email);
         updateFormStatus();
-        callback.accept(this.courseReg.getEmail(), validation);
+        callback.accept(this.courseReg.getValidatedForm().getEmail(), validation);
     }
 
     public void setMatricule(String matricule, BiConsumer<String, DataValidation> callback) {
-        DataValidation validation = this.courseReg.setMatricule(matricule);
+        DataValidation validation = this.courseReg.getValidatedForm().setMatricule(matricule);
         updateFormStatus();
-        callback.accept(this.courseReg.getMatricule(), validation);
+        callback.accept(this.courseReg.getValidatedForm().getMatricule(), validation);
     }
 
     public void setCourseByCode(String code, BiConsumer<Course, DataValidation> callback) {
         Course course = courseList.getCourseByCode(code);
         if (course != null) {
-            DataValidation validation = this.courseReg.setCourse(course);
+            DataValidation validation = this.courseReg.getValidatedForm().setCourse(course);
             updateFormStatus();
-            callback.accept(this.courseReg.getCourse(), validation);
+            callback.accept(this.courseReg.getValidatedForm().getCourse(), validation);
         }
         else {
             callback.accept(null, new DataValidation(false, ""));
@@ -67,14 +67,14 @@ public class ClientController {
     }
 
     public void setCourse(Course course, BiConsumer<Course, DataValidation> callback) {
-        DataValidation validation = this.courseReg.setCourse(course);
+        DataValidation validation = this.courseReg.getValidatedForm().setCourse(course);
         updateFormStatus();
-        callback.accept(this.courseReg.getCourse(), validation);
+        callback.accept(this.courseReg.getValidatedForm().getCourse(), validation);
     }
 
     public void updateFormStatus() {
         if (this.formStatusCallback != null) {
-            this.formStatusCallback.accept(this.courseReg.isFullyValid());
+            this.formStatusCallback.accept(this.courseReg.getValidatedForm().isFullyValid());
         }
     }
 
@@ -83,7 +83,7 @@ public class ClientController {
     }
 
     public void isFormComplete(Consumer<Boolean> callback) {
-        callback.accept(this.courseReg.isFullyValid());
+        callback.accept(this.courseReg.getValidatedForm().isFullyValid());
     }
 
     public void registerToCourse(Consumer<ModelResult<RegistrationForm>> callback) {
