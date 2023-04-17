@@ -10,9 +10,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
+/**
+ * Le programme qui attend de recevoir des commandes pour s'exécuter
+ */
 public class Server {
-
+    /**
+     * La commande pour s'inscrire au cours
+     */
     public final static String REGISTER_COMMAND = "INSCRIRE";
+    /**
+     * La commande pour charger les cours correspondant aux critères donnés
+     */
     public final static String LOAD_COMMAND = "CHARGER";
     private final ServerSocket server;
     private Socket client;
@@ -20,22 +28,42 @@ public class Server {
     private ObjectOutputStream objectOutputStream;
     private final ArrayList<EventHandler> handlers;
 
+    /**
+     * Crée un objet Server sur le port spécifié et une liste de tous les EventHandlers ajoutés.
+     * @param port Porte écoutée par le serveur
+     * @throws IOException Exception produite par des opérations d'entrée/sortie échouées ou interrompues
+     */
     public Server(int port) throws IOException {
         this.server = new ServerSocket(port, 1);
         this.handlers = new ArrayList<EventHandler>();
         this.addEventHandler(this::handleEvents);
     }
 
+    /**
+     * Ajoute les EventHandlers à la liste handlers contenant les méthodes qui réagissent aux
+     * différents événements
+     * @param h Object EventHandler
+     */
     public void addEventHandler(EventHandler h) {
         this.handlers.add(h);
     }
 
+    /**
+     * Appelle tous les EventHandlers qui sont abonnés aux évènements du Server.
+     * @param cmd Commande donnée par le client
+     * @param arg Argument spécifié par le client
+     */
     private void alertHandlers(String cmd, String arg) {
         for (EventHandler h : this.handlers) {
             h.handle(cmd, arg);
         }
     }
 
+    /**
+     *  Attend la connexion d'un client, écoute et exécute les requêtes envoyées par le client,
+     *  et déconnecte une fois la requête est traitée.
+     *  @throws Exception apparition d'une situation anormale qui conduirait à l'échec du programme
+     */
     public void run() {
         while (true) {
             try {
@@ -52,6 +80,13 @@ public class Server {
         }
     }
 
+    /**
+     * Interprète la commande du client et averti tous les handlers lorsqu'un événement
+     * survient
+     * @throws IOException erreur d'entrée du stream
+     * @throws ClassNotFoundException erreur quand aucune définition de la classe alertHandlers
+     * n'a pu être trouvée.
+     */
     public void listen() throws IOException, ClassNotFoundException {
         String line;
         if ((line = this.objectInputStream.readObject().toString()) != null) {
@@ -62,6 +97,13 @@ public class Server {
         }
     }
 
+    /**
+     * Découpe la commande reçue sous la forme d'un String, et renvoie un nouveau Pair.
+     *
+     * La coupe du line est effectuée au premier espace
+     * @param line le String de commande reçue
+     * @return Le nouvel objet Pair qui contient le type de commande et l'argument précise.
+     */
     public Pair<String, String> processCommandLine(String line) {
         String[] parts = line.split(" ");
         String cmd = parts[0];
@@ -69,12 +111,21 @@ public class Server {
         return new Pair<>(cmd, args);
     }
 
+    /**
+     * Ferme l'objet Socket connecté au client après la requête soit exécutée
+     * @throws IOException erreur d'entrée/sortie
+     */
     public void disconnect() throws IOException {
         objectOutputStream.close();
         objectInputStream.close();
         client.close();
     }
 
+    /**
+     * Appelle la fonction correspondante selon la requête reçue
+     * @param cmd le type de commande
+     * @param arg l'argument précise
+     */
     public void handleEvents(String cmd, String arg) {
         if (cmd.equals(REGISTER_COMMAND)) {
             handleRegistration();
@@ -84,12 +135,15 @@ public class Server {
     }
 
     /**
-     * Lire un fichier texte contenant des informations sur les cours et les transofmer en liste d'objets 'Course'.
-     * La méthode filtre les cours par la session spécifiée en argument.
-     * Ensuite, elle renvoie la liste des cours pour une session au client en utilisant l'objet 'objectOutputStream'.
-     * La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
+     * Charge la liste des cours filtré par la session demandée par le client.
+     *
+     * Le fichier cours.txt contient tous les cours disponible que le serveur doit lire.
+     * La liste courses contient les cours sous le format de Class Course, filtré par la session
+     * avec le code, le nom et la session du cours.
      *
      * @param arg la session pour laquelle on veut récupérer la liste des cours
+     * @throws FileNotFoundException échec de la tentative d'ouverture du fichier "cours.txt"
+     * @throws IOException erreur d'entrée de FileReader et de sortie du stream.
      */
     public void handleLoadCourses(String arg) {
         try (FileReader fr = new FileReader("cours.txt")) {
@@ -114,11 +168,19 @@ public class Server {
     }
 
     /**
-     * Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream',
-     * l'enregistrer dans un fichier texte
-     * et renvoyer un message de confirmation au client.
-     * La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet,
-     * l'écriture dans un fichier ou dans le flux de sortie.
+     * Inscrit le cours demandé par le client et récupère les informations du client.
+     * Si le code du cours demandé existe dans la liste du cours disponible dans la session demandée,
+     * le serveur ajoutera les informations relatives au client et au cours dans le fichier
+     * inscription.txt sous le format requis. Après, un message de réussite (ou celui d'échec)
+     * est envoyé au client.
+     *
+     * La liste courses contient tous les cours disponibles sous le format Object Course.
+     * L'objet InscriptionInfo contient les informations d'inscription au cours.
+     * Le String clientInscription est la ligne d'inscription correspondante au fichier inscription.txt.
+     * @throws FileNotFoundException échec de la tentative d'ouverture du fichier "cours.txt"
+     * @throws IOException erreur d'entrée/sortie
+     * @throws ClassNotFoundException  erreur quand aucune définition de la classe Course ou RegistrationForm
+     * n'ont pu être trouvé
      */
     public void handleRegistration() {
 
@@ -176,7 +238,7 @@ public class Server {
             System.out.println("La class lue n'existe pas dans le programme");
         } catch (IOException ex) {
             ex.printStackTrace();
-            System.out.println("Erreur à la lecture du fichier");
+            System.out.println("Erreur à l'ouverture du fichier");
         }
     }
 }
