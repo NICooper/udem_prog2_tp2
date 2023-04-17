@@ -1,11 +1,13 @@
-package client.client_simple;
+package views.client_simple;
 
-import models.Course;
-import models.RegistrationForm;
+import controllers.ClientController;
+import shared.models.Course;
+import shared.models.RegistrationForm;
+import shared.models.RemoteCourseList;
+import shared.models.RemoteCourseRegistration;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +16,8 @@ import java.util.Scanner;
  * Le programme qui se connecte au serveur pour lui envoyer des requêtes
  */
 public class Client {
-    static ArrayList<Course> courses;
+    static ClientController controller;
+    static List<Course> courses;
 
     /**
      * Imprime le message de bienvenue et démarre les deux methods getAvailableCourses() et
@@ -22,25 +25,26 @@ public class Client {
      * @param args pas utilisé
      */
     public static void main(String[] args)  {
+        controller = new ClientController(new RemoteCourseList(), new RemoteCourseRegistration());
 
         System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
         getAvailableCourses();
-        inscriptionToCourse();
     }
 
     /**
      * Affiche le message au client pour choisir la session et récupère la liste disponible
      * pour une session donnée, après affiche la liste des cours sous le format donné.
-     *
      * courses est la liste des cours retournée par le Server.
+     * n'a pu être trouvé
      */
-    public static void getAvailableCourses() {
+    private static void getAvailableCourses() {
         System.out.println("Veuillez choisir la session pour laquelle vous voulez consulter la liste des cours:");
         System.out.println("1. Automne\n2. Hiver\n3. Ete");
         System.out.println("Choix: ");
 
         Scanner scannerSession = new Scanner(System.in);
         int sessionNo = scannerSession.nextInt();
+        scannerSession.nextLine();
         String session = null;
         if (sessionNo == 1) {
             session = "Automne";
@@ -52,32 +56,19 @@ public class Client {
             System.out.println("Entrée invalide");
         }
 
-        try {
-            Socket clientSocket = new Socket("127.0.0.1", 1337);
-            ObjectOutputStream os = new ObjectOutputStream(clientSocket.getOutputStream());
-            ObjectInputStream is = new ObjectInputStream(clientSocket.getInputStream());
+        controller.setSession(session, (sess, validation) -> {});
+        controller.loadCourseList((result) -> {
+            courses = result.data;
+        });
 
-            os.writeObject("CHARGER " + session);
+        System.out.println("Les cours offerts pendant la session d'" + session + " sont:");
 
-            System.out.println("Les cours offerts pendant la session d'" + session + " sont:");
-
-            Object response = is.readObject();
-            if (response instanceof ArrayList<?>) {
-                courses = (ArrayList<Course>) response;
-                for (int i = 0; i < courses.size(); i++) {
-                    System.out.println(i + 1 + ". " + courses.get(i).getCode() +
-                            " " + courses.get(i).getName());
-                }
-            }
-            is.close();
-            os.close();
-            inscriptionToCourse();
-
-        } catch (IOException ex) {
-            System.out.println("Erreur de connexion avec le serveur");
-        } catch (ClassNotFoundException ce) {
-            System.out.println("La class lue n'existe pas dans le programme");
+        for (int i = 0; i < courses.size(); i++) {
+            System.out.println(i + 1 + ". " + courses.get(i).getCode() +
+                    " " + courses.get(i).getName());
         }
+
+        inscriptionToCourse();
     }
 
     /**
@@ -86,15 +77,17 @@ public class Client {
      * choisit de s'inscrire au cours, il doit donner les informations requises, y compris le code du cours.
      * Le code du cours doit être présent dans la liste des cours disponibles dans la session en question.
      * Après le client va envoyer toutes les informations sous la forme d'un Objet RegistrationForm.
+     * n'a pu être trouvé
      */
-    public static void inscriptionToCourse() {
+    private static void inscriptionToCourse() {
         System.out.println("Choix:");
         System.out.println("1. Consulter les cours offerts pour une autre session");
         System.out.println("2. Inscription à un cours");
         System.out.println("Choix:");
 
-        Scanner scannerInscription = new Scanner(System.in);
-        int inscription = scannerInscription.nextInt();
+        Scanner scanner = new Scanner(System.in);
+        int inscription = scanner.nextInt();
+        scanner.nextLine();
 
         if (inscription == 1) {
             getAvailableCourses();
@@ -103,26 +96,26 @@ public class Client {
             inscriptionToCourse();
         }
 
-        System.out.println(" ");
+        System.out.println();
         System.out.println("Veuillez saisir votre prénom: ");
-        Scanner scannerFN = new Scanner(System.in);
-        String firstName = scannerFN.nextLine();
+        String firstName = scanner.nextLine();
+        controller.setFirstName(firstName, (s, v) -> {});
 
         System.out.println("Veuillez saisir votre nom: ");
-        Scanner scannerLN = new Scanner(System.in);
-        String lastName = scannerLN.nextLine();
+        String lastName = scanner.nextLine();
+        controller.setLastName(lastName, (s, v) -> {});
 
         System.out.println("Veuillez saisir votre email: ");
-        Scanner scannerEmail = new Scanner(System.in);
-        String email = scannerEmail.nextLine();
+        String email = scanner.nextLine();
+        controller.setEmail(email, (s, v) -> {});
 
         System.out.println("Veuillez saisir votre matricule: ");
-        Scanner scannerMatricule = new Scanner(System.in);
-        String matricule = scannerMatricule.nextLine();
+        String matricule = scanner.nextLine();
+        controller.setMatricule(matricule, (s, v) -> {});
 
         System.out.println("Veuillez saisir le code du cours: ");
-        Scanner scannerCode = new Scanner(System.in);
-        String code = scannerCode.nextLine();
+        String code = scanner.nextLine();
+
         Course matchedCourse = null;
         for (Course course: courses) {
             if (course.getCode().equals(code)) {
@@ -135,26 +128,11 @@ public class Client {
             getAvailableCourses();
         }
 
+        controller.setCourse(matchedCourse, (c, v) -> {});
 
-        try {
-            Socket clientSocket = new Socket("127.0.0.1", 1337);
-            ObjectOutputStream os = new ObjectOutputStream(clientSocket.getOutputStream());
-            ObjectInputStream is = new ObjectInputStream(clientSocket.getInputStream());
-
-            os.writeObject("INSCRIRE");
-            RegistrationForm inscriptionInfo = new RegistrationForm(
-                    firstName, lastName, email, matricule, matchedCourse);
-            os.writeObject(inscriptionInfo);
-
-            System.out.println(is.readObject());
-
-            is.close();
-            os.close();
-
-        } catch (IOException ex) {
-            System.out.println("Erreur de connexion avec le serveur");
-        } catch (ClassNotFoundException ce) {
-            System.out.println("La class lue n'existe pas dans le programme");
-        }
+        controller.registerToCourse((result) -> {
+            System.out.println(result.message);
+            getAvailableCourses();
+        });
     }
 }

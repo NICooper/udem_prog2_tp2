@@ -1,8 +1,9 @@
 package server;
 
 import javafx.util.Pair;
-import models.Course;
-import models.RegistrationForm;
+import shared.models.Course;
+import shared.models.ModelResult;
+import shared.models.RegistrationForm;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -141,7 +142,7 @@ public class Server {
      *
      * @param session la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String session) {
+    public void handleLoadCourses(String arg) {
         try (FileReader fr = new FileReader("cours.txt")) {
             BufferedReader reader = new BufferedReader(fr);
 
@@ -150,7 +151,7 @@ public class Server {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] courseInfo = line.split("\t");
-                if (courseInfo[2].equals(session)) {
+                if (courseInfo[2].equals(arg)) {
                     courses.add(new Course(courseInfo[1], courseInfo[0], courseInfo[2]));
                 }
             }
@@ -177,6 +178,7 @@ public class Server {
     public void handleRegistration() {
 
         List<Course> courses = new ArrayList<>();
+        ModelResult<RegistrationForm> result = new ModelResult<>();
 
         try (FileReader fr = new FileReader("cours.txt")) {
             BufferedReader reader = new BufferedReader(fr);
@@ -207,21 +209,24 @@ public class Server {
                 String clientInscription = inscriptionInfo.getCourse().getSession() + "\t"
                         + inscriptionInfo.getCourse().getCode() + "\t" + inscriptionInfo.getMatricule()
                         + "\t" + inscriptionInfo.getPrenom() + "\t" + inscriptionInfo.getNom()
-                        + "\t" + inscriptionInfo.getEmail();
+                        + "\t" + inscriptionInfo.getEmail() + "\n";
                 try {
-                    FileWriter fw = new FileWriter("inscription.txt");
+                    FileWriter fw = new FileWriter("inscription.txt", true);
                     BufferedWriter writer = new BufferedWriter(fw);
                     writer.append(clientInscription);
                     writer.close();
-                    this.objectOutputStream.writeObject("Félicitations! Inscription réussie de "
-                            + inscriptionInfo.getPrenom() + "au cours "
-                            + inscriptionInfo.getCourse().getCode() +".");
+                    result.success = true;
+                    result.message = "Félicitations! Inscription réussie de "
+                            + inscriptionInfo.getPrenom() + " au cours "
+                            + inscriptionInfo.getCourse().getCode() +".";
                 } catch (IOException e) {
                     System.out.println("Erreur à l'écriture du fichier");
                 }
             } else {
-                this.objectOutputStream.writeObject("Cours introuvable.");
+                result.success = false;
+                result.message = "Cours introuvable.";
             }
+            this.objectOutputStream.writeObject(result);
         } catch (ClassNotFoundException ex) {
             System.out.println("La class lue n'existe pas dans le programme");
         } catch (IOException ex) {
