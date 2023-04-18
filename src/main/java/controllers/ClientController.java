@@ -43,7 +43,7 @@ public class ClientController {
 
     /**
      * Demande au modèle de charger la List de Course. Appelle la callback donnée avec le résultat.
-     * @param callback Fonction, fournie par une vue, qui reçoit un ModelResult<Course>. Ceci contient le résultat
+     * @param callback Fonction, fournie par une vue, qui reçoit un ModelResult de Course. Ceci contient le résultat
      *                 de l'opération demandée au modèle.
      */
     public void loadCourseList(Consumer<ModelResult<List<Course>>> callback) {
@@ -154,7 +154,7 @@ public class ClientController {
 
     /**
      * Demande au modèle d'enregistrer les données d'inscription. Appelle la callback donnée avec le résultat.
-     * @param callback Fonction, fournie par une vue, qui reçoit un ModelResult<RegistrationForm>. Ceci contient le résultat
+     * @param callback Fonction, fournie par une vue, qui reçoit un ModelResult de RegistrationForm. Ceci contient le résultat
      *                 de l'opération demandée au modèle.
      */
     public void registerToCourse(Consumer<ModelResult<RegistrationForm>> callback) {

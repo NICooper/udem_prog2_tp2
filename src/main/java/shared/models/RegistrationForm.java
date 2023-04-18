@@ -3,7 +3,7 @@ package shared.models;
 import java.io.Serializable;
 
 /**
- * Prendre un objet de la classe RegistrationForm et le sérialise.
+ * Classe qui représente les données d'un formulaire d'inscription.
  */
 public class RegistrationForm implements Serializable {
     private String prenom;
@@ -13,7 +13,7 @@ public class RegistrationForm implements Serializable {
     private Course course;
 
     /**
-     * Constructeur de la classe RegistrationForme.
+     * Constructeur de la classe RegistrationForm.
      * @param prenom Prénom du client
      * @param nom Nom du client
      * @param email Courriel du client
@@ -30,7 +30,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Getter du prénom
-     * @return retourne le prénom
+     * @return le prénom
      */
     public String getPrenom() {
         return prenom;
@@ -38,7 +38,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Setter du prénom
-     * @param prenom définit ou met à jour le prénom
+     * @param prenom nouveau prénom
      */
     public void setPrenom(String prenom) {
         this.prenom = prenom;
@@ -46,7 +46,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Getter du nom
-     * @return retourne le nom
+     * @return le nom
      */
     public String getNom() {
         return nom;
@@ -54,7 +54,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Setter du nom
-     * @param nom définit ou met à jour le nom
+     * @param nom nouveau nom
      */
     public void setNom(String nom) {
         this.nom = nom;
@@ -62,7 +62,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Getter du courriel
-     * @return retourne le courriel du client
+     * @return le courriel du client
      */
     public String getEmail() {
         return email;
@@ -70,7 +70,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Setter du courriel
-     * @param email définit ou met à jour le courriel
+     * @param email nouveau courriel
      */
     public void setEmail(String email) {
         this.email = email;
@@ -78,7 +78,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Getter du matricule
-     * @return retourne le matricule
+     * @return le matricule
      */
     public String getMatricule() {
         return matricule;
@@ -86,7 +86,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Setter du matricule
-     * @param matricule définit ou met à jour le matricule
+     * @param matricule nouveau matricule
      */
     public void setMatricule(String matricule) {
         this.matricule = matricule;
@@ -94,7 +94,7 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Getter de l'objet Course
-     * @return retourne l'objet Course
+     * @return l'objet Course
      */
     public Course getCourse() {
         return course;
@@ -102,16 +102,15 @@ public class RegistrationForm implements Serializable {
 
     /**
      * Setter de l'objet Course
-     * @param course définit ou met à jour l'objet Course
+     * @param course nouvelle objet Course
      */
     public void setCourse(Course course) {
         this.course = course;
     }
 
     /**
-     * Transforme les informations pour la registration en String
-     * indique au compilateur que la methode est réécrit
-     * @return retourne un String avec toutes les informations nécessaires de la registration
+     * Transforme les informations de la RegistrationForm en String
+     * @return un String avec toutes les informations de la registration form
      */
     @Override
     public String toString() {

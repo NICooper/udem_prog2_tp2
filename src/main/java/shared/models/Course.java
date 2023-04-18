@@ -3,7 +3,7 @@ package shared.models;
 import java.io.Serializable;
 
 /**
- * Prendre un objet de la classe Course et le sérialise.
+ * Classe qui represente un cours.
  */
 public class Course implements Serializable {
 
@@ -25,7 +25,7 @@ public class Course implements Serializable {
 
     /**
      * Getter du nom
-     * @return retourne le nom du cours
+     * @return le nom du cours
      */
     public String getName() {
         return name;
@@ -33,7 +33,7 @@ public class Course implements Serializable {
 
     /**
      * Setter du nom
-     * @param name définit ou met à jour le nom du cours
+     * @param name nouvelle valeur du nom du cours
      */
     public void setName(String name) {
         this.name = name;
@@ -41,7 +41,7 @@ public class Course implements Serializable {
 
     /**
      * Getter du code
-     * @return retournr le code du cours
+     * @return le code du cours
      */
     public String getCode() {
         return code;
@@ -49,7 +49,7 @@ public class Course implements Serializable {
 
     /**
      * Setter du code
-     * @param code deéfinit ou met à jour le code du cours
+     * @param code nouvelle valeur du code du cours
      */
     public void setCode(String code) {
         this.code = code;
@@ -57,7 +57,7 @@ public class Course implements Serializable {
 
     /**
      * Getter de la session
-     * @return retourne la session du cours
+     * @return la session du cours
      */
     public String getSession() {
         return session;
@@ -65,7 +65,7 @@ public class Course implements Serializable {
 
     /**
      * Setter de la session
-     * @param session définit ou met à jour la session
+     * @param session nouvelle valeur de session
      */
     public void setSession(String session) {
         this.session = session;
@@ -73,8 +73,7 @@ public class Course implements Serializable {
 
     /**
      * Transforme les informations du cours en String
-     * indique au compilateur que la methode est réécrit
-     * @return retourne un String avec toutes les informations du cours
+     * @return un String avec toutes les informations du cours
      */
     @Override
     public String toString() {
