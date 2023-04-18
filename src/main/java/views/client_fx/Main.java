@@ -9,7 +9,7 @@ import shared.models.RemoteCourseRegistration;
  */
 public class Main {
     private static String serverIpAddress = "127.0.0.1";
-    int serverPort = 1337;
+    private static int serverPort = 1337;
 
     /**
      * Démarre l'application d'inscription de cours de l'UdeM.
@@ -18,8 +18,8 @@ public class Main {
      */
     public static void main(String[] args) {
         ClientController controller = new ClientController(
-                new RemoteCourseList(),
-                new RemoteCourseRegistration(se)
+                new RemoteCourseList(serverIpAddress, serverPort, "CHARGER"),
+                new RemoteCourseRegistration(serverIpAddress, serverPort, "INSCRIRE")
         );
 
         ClientFx.main(controller);

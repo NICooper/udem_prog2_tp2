@@ -12,12 +12,20 @@ import java.util.List;
  * un appel au serveur pour récupérer la List.
  */
 public class RemoteCourseList extends CourseList {
+    private final String ipAddress;
+    private final int port;
+    private final String serverCommand;
 
     /**
      * Crée un nouveau RemoteCourseList.
+     * @param ipAddress L'adresse IP du serveur.
+     * @param port Le port du serveur à contacter.
+     * @param serverCommand La commande en String qui correspond au commande du serveur pour le chargement de la liste de cours.
      */
-    public RemoteCourseList() {
-        super();
+    public RemoteCourseList(String ipAddress, int port, String serverCommand) {
+        this.ipAddress = ipAddress;
+        this.port = port;
+        this.serverCommand = serverCommand;
     }
 
     /**
@@ -34,17 +42,28 @@ public class RemoteCourseList extends CourseList {
             return result;
         }
 
-        try (Socket clientSocket = new Socket("127.0.0.1", 1337);
+        try (Socket clientSocket = new Socket(this.ipAddress, this.port);
              ObjectOutputStream os = new ObjectOutputStream(clientSocket.getOutputStream());
              ObjectInputStream is = new ObjectInputStream(clientSocket.getInputStream())
         ) {
-            os.writeObject("CHARGER " + this.getSessionFilter());
+            os.writeObject(this.serverCommand + " " + this.getSessionFilter());
 
             Object response = is.readObject();
-            if (response instanceof ArrayList<?>) {
-                this.courses = (List<Course>) response;
-                result.data = this.courses;
-                result.success = true;
+
+            if (response instanceof ModelResult<?>) {
+                ModelResult<List<Course>> modelresponse = (ModelResult<List<Course>>) response;
+                if (((ModelResult<?>) response).success) {
+                    this.courses = modelresponse.data;
+                    result.data = this.courses;
+                    result.success = true;
+                }
+                else {
+                    result.success = false;
+                    result.message = modelresponse.message;
+                }
+            }
+            else if (response instanceof String) {
+                result.success = false;
             }
             else {
                 result.success = false;

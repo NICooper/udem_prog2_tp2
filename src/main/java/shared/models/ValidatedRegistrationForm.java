@@ -13,7 +13,7 @@ public class ValidatedRegistrationForm {
      * Construit un nouveau ValidatedRegistrationForm où les champs du RegistrationForm sont tous des String vides.
      */
     public ValidatedRegistrationForm() {
-//        this(new RegistrationForm("", "", "", "", new Course("", "", "")));
+        this.form = new RegistrationForm("", "", "", "", new Course("", "", ""));
     }
 
     /**

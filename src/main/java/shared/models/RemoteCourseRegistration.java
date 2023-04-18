@@ -6,26 +6,18 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- *
+ * RemoteCourseRegistration sert à sauvegarder un RegistrationForm sur un serveur.
  */
 public class RemoteCourseRegistration extends CourseRegistration {
-    private String ipAddress;
-    private int port;
-    private String serverCommand;
-
-//    public RemoteCourseRegistration() {
-//        super();
-//    }
-
-//    public RemoteCourseRegistration(RegistrationForm form) {
-//        super(form);
-//    }
+    private final String ipAddress;
+    private final int port;
+    private final String serverCommand;
 
     /**
-     *
-     * @param ipAddress
-     * @param port
-     * @param serverCommand
+     * Crée un nouveau RemoteCourseRegistration.
+     * @param ipAddress L'adresse IP du serveur.
+     * @param port Le port du serveur à contacter.
+     * @param serverCommand La commande en String qui correspond au commande du serveur pour la sauvegarde d'inscription.
      */
     public RemoteCourseRegistration(String ipAddress, int port, String serverCommand) {
         this.ipAddress = ipAddress;
@@ -34,14 +26,15 @@ public class RemoteCourseRegistration extends CourseRegistration {
     }
 
     /**
-     *
-     * @return
+     * Fait une demande au serveur spécifié de sauvgarder le formulaire d'inscription qui a été donné à CourseRegistration.
+     * @return Un ModelResult qui contient le formulaire sauvegardé et des informations sur le succès de l'opération de
+     * sauvegarde.
      */
     @Override
     public ModelResult<RegistrationForm> register() {
         ModelResult<RegistrationForm> result = new ModelResult<>();
 
-        try (Socket clientSocket = new Socket(this.serverCommand, this.port);
+        try (Socket clientSocket = new Socket(this.ipAddress, this.port);
              ObjectOutputStream os = new ObjectOutputStream(clientSocket.getOutputStream());
              ObjectInputStream is = new ObjectInputStream(clientSocket.getInputStream())
         ) {
@@ -53,6 +46,7 @@ public class RemoteCourseRegistration extends CourseRegistration {
             Object obj = is.readObject();
             if (obj instanceof ModelResult<?>) {
                 result = (ModelResult<RegistrationForm>) obj;
+                result.success = true;
             }
             else {
                 result.success = false;

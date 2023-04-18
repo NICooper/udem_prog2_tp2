@@ -1,9 +1,7 @@
 package server;
 
 import javafx.util.Pair;
-import shared.models.Course;
-import shared.models.ModelResult;
-import shared.models.RegistrationForm;
+import shared.models.*;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -11,7 +9,8 @@ import java.net.Socket;
 import java.util.*;
 
 /**
- * Le programme qui attend de recevoir des commandes pour s'exécuter
+ * Le serveur de l'inscription de UdeM. Permet aux clients de consulter la liste de cours de chaque session
+ * et de s'inscrire aux cours.
  */
 public class Server {
     /**
@@ -19,7 +18,7 @@ public class Server {
      */
     public final static String REGISTER_COMMAND = "INSCRIRE";
     /**
-     * La commande pour charger les cours correspondant aux critères donnés
+     * La commande pour charger la liste de cours
      */
     public final static String LOAD_COMMAND = "CHARGER";
     private final ServerSocket server;
@@ -31,7 +30,7 @@ public class Server {
     /**
      * Crée un objet Server sur le port spécifié et une liste de tous les EventHandlers ajoutés.
      * @param port Porte écoutée par le serveur
-     * @throws IOException Exception produite par des opérations d'entrée/sortie échouées ou interrompues
+     * @throws IOException Exception qui peut être lancée lors de la création du Socket du serveur
      */
     public Server(int port) throws IOException {
         this.server = new ServerSocket(port, 1);
@@ -40,9 +39,8 @@ public class Server {
     }
 
     /**
-     * Ajoute les EventHandlers à la liste handlers contenant les méthodes qui réagissent aux
-     * différents événements
-     * @param h Object EventHandler
+     * Ajoute les EventHandlers à la liste des handlers qui seront appelés quand le serveur reçoit une commande d'un client
+     * @param h Un EventHandler.
      */
     public void addEventHandler(EventHandler h) {
         this.handlers.add(h);
@@ -62,7 +60,6 @@ public class Server {
     /**
      *  Attend la connexion d'un client, écoute et exécute les requêtes envoyées par le client,
      *  et déconnecte une fois la requête est traitée.
-     *  @throws Exception apparition d'une situation anormale qui conduirait à l'échec du programme
      */
     public void run() {
         while (true) {
@@ -81,11 +78,9 @@ public class Server {
     }
 
     /**
-     * Interprète la commande du client et averti tous les handlers lorsqu'un événement
-     * survient
-     * @throws IOException erreur d'entrée du stream
-     * @throws ClassNotFoundException erreur quand aucune définition de la classe alertHandlers
-     * n'a pu être trouvée.
+     * Écoute la commande du client et averti tous les handlers lorsqu'une commande est reçu
+     * @throws IOException erreur du stream utilisé pour reçevoir des données du client
+     * @throws ClassNotFoundException erreur quand la classe de l'objet envoyé par le client n'est pas compris par le serveur
      */
     public void listen() throws IOException, ClassNotFoundException {
         String line;
@@ -99,10 +94,9 @@ public class Server {
 
     /**
      * Découpe la commande reçue sous la forme d'un String, et renvoie un nouveau Pair.
-     *
-     * La coupe du line est effectuée au premier espace
+     * La coupe du line est effectuée à la première espace
      * @param line le String de commande reçue
-     * @return Le nouvel objet Pair qui contient le type de commande et l'argument précise.
+     * @return Le nouvel objet Pair qui contient le type de commande et l'argument pour cette commande.
      */
     public Pair<String, String> processCommandLine(String line) {
         String[] parts = line.split(" ");
@@ -112,8 +106,8 @@ public class Server {
     }
 
     /**
-     * Ferme l'objet Socket connecté au client après la requête soit exécutée
-     * @throws IOException erreur d'entrée/sortie
+     * Ferme l'objet Socket connecté au client après que la requête soit exécutée
+     * @throws IOException erreur d'entrée/sortie qui peut arriver en fermant la connexion au client
      */
     public void disconnect() throws IOException {
         objectOutputStream.close();
@@ -122,9 +116,9 @@ public class Server {
     }
 
     /**
-     * Appelle la fonction correspondante selon la requête reçue
-     * @param cmd le type de commande
-     * @param arg l'argument précise
+     * Appelle la fonction correspondante selon la commande reçue
+     * @param cmd le nom de la commande
+     * @param arg un argument à donner à la fonction qui correspond à la commande
      */
     public void handleEvents(String cmd, String arg) {
         if (cmd.equals(REGISTER_COMMAND)) {
@@ -136,34 +130,29 @@ public class Server {
 
     /**
      * Charge la liste des cours filtré par la session demandée par le client.
-     *
-     * Le fichier cours.txt contient tous les cours disponible que le serveur doit lire.
-     * La liste courses contient les cours sous le format de Class Course, filtré par la session
-     * avec le code, le nom et la session du cours.
-     *
+     * Le fichier cours.txt contient tous les cours disponible et est dans le format tsv:
+     * code nom session
      * @param arg la session pour laquelle on veut récupérer la liste des cours
-     * @throws FileNotFoundException échec de la tentative d'ouverture du fichier "cours.txt"
-     * @throws IOException erreur d'entrée de FileReader et de sortie du stream.
      */
     public void handleLoadCourses(String arg) {
-        try (FileReader fr = new FileReader("cours.txt")) {
-            BufferedReader reader = new BufferedReader(fr);
+        LocalCourseList courseList = new LocalCourseList("cours.txt");
+        DataValidation sessionValidation = courseList.setSessionFilter(arg);
 
-            List<Course> courses = new ArrayList<>();
+        ModelResult<List<Course>> result = new ModelResult<>();
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] courseInfo = line.split("\t");
-                if (courseInfo[2].equals(arg)) {
-                    courses.add(new Course(courseInfo[1], courseInfo[0], courseInfo[2]));
-                }
-            }
-            this.objectOutputStream.writeObject(courses);
+        if (sessionValidation.isValid) {
+            result = courseList.loadFilteredCourseList();
+        }
+        else {
+            result.success = false;
+            result.message = sessionValidation.validationMessage;
+        }
 
-        } catch (FileNotFoundException fe) {
-            System.out.println("Fichier pas trouvé.");
-        } catch (IOException ex) {
-            System.out.println("Erreur à l'ouverture du fichier.");
+        try {
+            this.objectOutputStream.writeObject(result);
+        }
+        catch (IOException e) {
+            System.out.println("Une erreur est survenue en répondant au client.");
         }
     }
 
@@ -171,74 +160,74 @@ public class Server {
      * Inscrit le cours demandé par le client et récupère les informations du client.
      * Si le code du cours demandé existe dans la liste du cours disponible dans la session demandée,
      * le serveur ajoutera les informations relatives au client et au cours dans le fichier
-     * inscription.txt sous le format requis. Après, un message de réussite (ou celui d'échec)
-     * est envoyé au client.
-     *
-     * La liste courses contient tous les cours disponibles sous le format Object Course.
-     * L'objet InscriptionInfo contient les informations d'inscription au cours.
-     * Le String clientInscription est la ligne d'inscription correspondante au fichier inscription.txt.
-     * @throws FileNotFoundException échec de la tentative d'ouverture du fichier "cours.txt"
-     * @throws IOException erreur d'entrée/sortie
-     * @throws ClassNotFoundException  erreur quand aucune définition de la classe Course ou RegistrationForm
-     * n'ont pu être trouvé
+     * inscription.txt. Après, un message de réussite (ou celui d'échec) est envoyé au client.
      */
     public void handleRegistration() {
+        LocalCourseList courseList = new LocalCourseList("cours.txt");
+        ModelResult<List<Course>> coursesResult = courseList.loadFilteredCourseList();
 
-        List<Course> courses = new ArrayList<>();
         ModelResult<RegistrationForm> result = new ModelResult<>();
 
-        try (FileReader fr = new FileReader("cours.txt")) {
-            BufferedReader reader = new BufferedReader(fr);
+        if (!coursesResult.success) {
+            result.success = false;
+            result.message = coursesResult.message;
+        }
+        else {
+            List<Course> courses = coursesResult.data;
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] courseInfo = line.split("\t");
-                courses.add(new Course(courseInfo[1], courseInfo[0], courseInfo[2]));
+            try {
+                RegistrationForm inscriptionInfo = (RegistrationForm) objectInputStream.readObject();
+
+                boolean hasMatchingCourse = false;
+                for (Course cours : courses) {
+                    if (cours.getCode().equals(inscriptionInfo.getCourse().getCode())
+                            && (cours.getSession().equals(inscriptionInfo.getCourse().getSession()))) {
+                        hasMatchingCourse = true;
+                        break;
+                    }
+                }
+
+                if (hasMatchingCourse) {
+                    LocalCourseRegistration courseRegistration = new LocalCourseRegistration("inscription.txt");
+                    DataValidation formValidation = courseRegistration.getValidatedForm().setRegistrationForm(inscriptionInfo);
+                    if (formValidation.isValid) {
+                        ModelResult<RegistrationForm> writeResult = courseRegistration.register();
+                        if (writeResult.success) {
+                            result.data = inscriptionInfo;
+                            result.success = true;
+                            result.message = writeResult.message;
+                        }
+                        else {
+                            result.success = false;
+                            result.message = "Le serveur n'a pas pu sauvegarder l'inscription.";
+                            System.out.println("Erreur à l'écriture du fichier");
+                        }
+                    } else {
+                        result.success = false;
+                        result.message = "Le formulaire d'inscription fourni n'est pas valide.";
+                        System.out.println("Le formulaire d'inscription fourni n'est pas valide.");
+                    }
+                } else {
+                    result.success = false;
+                    result.message = "Cours introuvable du côté serveur.";
+                }
+
+            } catch (ClassNotFoundException ex) {
+                result.success = false;
+                result.message = "Erreur de communcations entre le serveur et client.";
+                System.out.println("L'objet envoyé par le client n'est pas connu par le serveur.");
+            } catch (IOException ex) {
+                result.success = false;
+                result.message = "Erreur de communcations entre le serveur et client.";
+                System.out.println("Erreur de stream de données entre le client et serveur.");
             }
-        } catch (FileNotFoundException fe) {
-            System.out.println("Fichier pas trouvé.");
-        } catch (IOException ex) {
-            System.out.println("Erreur à l'ouverture du fichier.");
         }
 
         try {
-            RegistrationForm inscriptionInfo = (RegistrationForm) objectInputStream.readObject();
-
-            boolean hasMatchingCourse = false;
-            for (Course cours : courses) {
-                if (cours.getCode().equals(inscriptionInfo.getCourse().getCode())
-                        && (cours.getSession().equals(inscriptionInfo.getCourse().getSession()))) {
-                    hasMatchingCourse = true;
-                    break;
-                }
-            }
-            if (hasMatchingCourse) {
-                String clientInscription = inscriptionInfo.getCourse().getSession() + "\t"
-                        + inscriptionInfo.getCourse().getCode() + "\t" + inscriptionInfo.getMatricule()
-                        + "\t" + inscriptionInfo.getPrenom() + "\t" + inscriptionInfo.getNom()
-                        + "\t" + inscriptionInfo.getEmail() + "\n";
-                try {
-                    FileWriter fw = new FileWriter("inscription.txt", true);
-                    BufferedWriter writer = new BufferedWriter(fw);
-                    writer.append(clientInscription);
-                    writer.close();
-                    result.success = true;
-                    result.message = "Félicitations! Inscription réussie de "
-                            + inscriptionInfo.getPrenom() + " au cours "
-                            + inscriptionInfo.getCourse().getCode() +".";
-                } catch (IOException e) {
-                    System.out.println("Erreur à l'écriture du fichier");
-                }
-            } else {
-                result.success = false;
-                result.message = "Cours introuvable.";
-            }
             this.objectOutputStream.writeObject(result);
-        } catch (ClassNotFoundException ex) {
-            System.out.println("La class lue n'existe pas dans le programme");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            System.out.println("Erreur à l'ouverture du fichier");
+        }
+        catch (IOException e) {
+            System.out.println("Erreur survenue en répondant au client.");
         }
     }
 }

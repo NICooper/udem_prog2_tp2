@@ -8,6 +8,7 @@ import java.io.Serializable;
  * @param <T> Le type d'objet contenu par ce ModelResult.
  */
 public class ModelResult<T> implements Serializable {
+
     /**
      * Les données retournées par le modèle.
      */
